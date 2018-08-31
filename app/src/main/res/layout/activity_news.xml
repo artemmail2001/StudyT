@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/blue">
+    <include
+        android:id="@+id/news_act_app_bar"
+        layout="@layout/app_bar_layout" />
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_margin="5dp"
+        app:cardCornerRadius="15dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="300dp">
+
+            <TextView
+                android:id="@+id/name_news_act"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignTop="@+id/score_news_act"
+                android:layout_marginStart="107dp"
+                android:text="Артём"
+                android:textColor="@color/black"
+                android:textSize="20dp" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/circle_news_act"
+                android:layout_width="94dp"
+                android:layout_height="99dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:src="@drawable/avatar" />
+
+            <TextView
+                android:id="@+id/score_news_act"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/date_news_act"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="40dp"
+                android:text="100 очков"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/date_news_act"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginEnd="41dp"
+                android:text="28.08.2018"
+                android:textColor="@color/black"/>
+
+            <TextView
+                android:id="@+id/number_people_news_act"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/circle_news_act"
+                android:layout_alignEnd="@+id/date_news_act"
+                android:text="осталось 20 мест"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/title_news_act"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/circle_news_act"
+                android:text="Давайте запрограммируем сайт го то вместе"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="20dp" />
+
+            <TextView
+                android:id="@+id/text_news_act"
+                android:layout_width="match_parent"
+                android:layout_height="141dp"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/title_news_act"
+                android:layout_marginTop="6dp"
+                android:textAlignment="center"
+                android:text="Я предлагаю собраться в 15:30 в библиотеке имени Ленина и  начать готовиться к такому немаловажному экзамену как огэ по физике"
+                android:textColor="@color/black" />
+
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_margin="5dp"
+        app:cardCornerRadius="15dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent">
+            <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/map"
+                tools:context=".MapsActivity"
+                android:name="com.google.android.gms.maps.SupportMapFragment" />
+
+            <ImageView
+                android:id="@+id/ic_gps"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginEnd="15dp"
+                android:layout_marginTop="15dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_gps" />
+
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+    <Button
+        android:background="@drawable/button_shape"
+        android:text="Присоединиться"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/button_join"/>
+
+
+</LinearLayout>

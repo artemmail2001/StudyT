@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "621732996086",
+    "firebase_url": "https://studyt-e6352.firebaseio.com",
+    "project_id": "studyt-e6352",
+    "storage_bucket": "studyt-e6352.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:621732996086:android:ee0433a99701fe6f",
+        "android_client_info": {
+          "package_name": "com.example.artik.studyt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "621732996086-m3s29lapc87pnf767ua044tkq2e1nfi7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.artik.studyt",
+            "certificate_hash": "d17ff187a2a80d61fcc893c3b06d37035d525bde"
+          }
+        },
+        {
+          "client_id": "621732996086-ma3s1pj54f3uj3g3kj2imgfhd8g98ikj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9_Gt3XhOaM6-dA0Pjh1_po_s4oK604h0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "621732996086-ma3s1pj54f3uj3g3kj2imgfhd8g98ikj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

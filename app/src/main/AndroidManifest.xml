@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.artik.studyt">
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application
+        android:name=".StudyClass"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_icon_ic_icon"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_icon_ic_icon_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme.NoActionBar">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDz70HKNXNMmFXh-wC0jS6i8D6__6ggEsY" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".Enter"
+            android:label="Вход"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Registration"
+            android:label="Регистрация"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ChatActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".SettingsActivity"
+            android:label="Настройки"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Base.Theme.AppCompat" />
+        <activity
+            android:name=".UserProfileActivity"
+            android:label="Страничка"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".NewsActivity"
+            android:label="Событие"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MapActivity"
+            android:label="Карта"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".AddTaskActivity"
+            android:label="Добавление события"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ParticipantsActivity"
+            android:screenOrientation="portrait"></activity>
+    </application>
+
+</manifest>
