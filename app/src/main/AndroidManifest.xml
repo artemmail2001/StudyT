@@ -12,9 +12,9 @@
     <application
         android:name=".StudyClass"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_icon_ic_icon"
+        android:icon="@mipmap/ic_i"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_icon_ic_icon_round"
+        android:roundIcon="@mipmap/ic_i"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
         <meta-data

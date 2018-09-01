@@ -1,6 +1,7 @@
 package com.example.artik.studyt;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
@@ -12,21 +13,24 @@ import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MarkerDialog extends DialogFragment {
+public class MarkerDialog extends DialogFragment implements View.OnClickListener {
     private static final String DATE = "date";
     private static final String Title = "title";
     private static final String Thumb = "thumb";
     private static final String Score = "score";
     private static final String Number = "number";
+    private static final String KEY = "key";
+    public String qwerty;
     private MarkerDialog mMarkerDialog;
     public static final String EXTRA_DATE = "LOL";
-    public static MarkerDialog newInstance(String thumb, String title, String date, String score, String number) {
+    public static MarkerDialog newInstance(String thumb, String title, String date, String score, String number, String key) {
         Bundle args = new Bundle();
         args.putSerializable(DATE, date);
         args.putSerializable(Title, title);
         args.putSerializable(Thumb, thumb);
         args.putSerializable(Score, score);
         args.putSerializable(Number, number);
+        args.putSerializable(KEY, key);
         MarkerDialog d = new MarkerDialog();
         d.setArguments(args);
         return d;
@@ -38,6 +42,8 @@ public class MarkerDialog extends DialogFragment {
         String thumb = (String)getArguments().getSerializable(Thumb);
         String score = (String)getArguments().getSerializable(Score);
         String number = (String)getArguments().getSerializable(Number);
+        String key = (String)getArguments().getSerializable(KEY);
+        qwerty = key;
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_fragment, null);
@@ -53,8 +59,18 @@ public class MarkerDialog extends DialogFragment {
         mTitle.setText(title);
         mScore.setText(score + " points");
         mDate.setText(date);
+        view.setOnClickListener(this);
         builder.setView(view);
 
         return builder.create();
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (!qwerty.equals(null)) {
+            Intent profileIntent = new Intent(getActivity(), NewsActivity.class);
+            profileIntent.putExtra("key", qwerty);
+            startActivity(profileIntent);
+        }
     }
 }

@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="@drawable/text_view_shape">
+    android:background="@color/st">
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
@@ -19,10 +19,10 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/circle_news"
-                android:layout_width="99dp"
-                android:layout_height="84dp"
-                android:layout_alignParentStart="true"
-                android:layout_alignTop="@+id/date_news"
+                android:layout_width="91dp"
+                android:layout_height="80dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
                 android:padding="4dp"
                 android:src="@drawable/avatar" />
 
@@ -39,9 +39,9 @@
                 android:id="@+id/title_news"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
+                android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
+                android:layout_marginBottom="45dp"
                 android:text="Название"
                 android:textColor="@color/black"
                 android:textSize="15dp" />
@@ -50,9 +50,8 @@
                 android:id="@+id/date_news"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignStart="@+id/number_people_news"
-                android:layout_marginTop="44dp"
+                android:layout_alignTop="@+id/score_news"
+                android:layout_toStartOf="@+id/block_news"
                 android:text="26.08.2018"
                 android:textColor="@color/black"
                 android:textSize="15dp" />
@@ -61,10 +60,9 @@
                 android:id="@+id/number_people_news"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignStart="@+id/score_news"
-                android:layout_marginBottom="52dp"
-                android:text="5 человек"
+                android:layout_alignTop="@+id/block_news"
+                android:layout_centerHorizontal="true"
+                android:text="осталось 5 места()-"
                 android:textColor="@color/black"
                 android:textSize="15dp" />
 
@@ -72,8 +70,10 @@
                 android:id="@+id/score_news"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/circle_news"
-                android:layout_alignEnd="@+id/title_news"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="35dp"
+                android:layout_marginTop="29dp"
                 android:text="Очки"
                 android:textColor="@color/black" />
         </RelativeLayout>

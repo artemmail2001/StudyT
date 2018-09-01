@@ -134,7 +134,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     markerName.setTag(issue.getKey().toString());
                     mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                         @Override
-                        public boolean onMarkerClick(Marker marker) {
+                        public boolean onMarkerClick(final Marker marker) {
                             mKeysDatabase.child(marker.getTag().toString()).addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -143,7 +143,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                     String date = dataSnapshot.child("date").getValue().toString();
                                     String number = dataSnapshot.child("number_people_left").getValue().toString();
                                     String score = dataSnapshot.child("score").getValue().toString();
-                                    MarkerDialog dialog = MarkerDialog.newInstance(thumb, title, date, score, number);
+                                    String key = marker.getTag().toString();
+                                    MarkerDialog dialog = MarkerDialog.newInstance(thumb, title, date, score, number, key);
                                     dialog.show(getSupportFragmentManager(), "TASK");
                                 }
 
