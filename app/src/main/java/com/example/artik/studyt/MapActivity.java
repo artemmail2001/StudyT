@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -79,7 +80,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private Boolean mLocationPermissionsGranted = false;
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
-    private DatabaseReference mKeysDatabase;
+    private DatabaseReference mKeysDatabase, mRoot;
     private List<Issue> issues;
 
     @Override
@@ -130,10 +131,27 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     double b = issue.getLongitude();
                     LatLng latLng = new LatLng(a, b);
                     final Marker markerName = mMap.addMarker(new MarkerOptions().position(latLng));
+                    markerName.setTag(issue.getKey().toString());
                     mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                         @Override
                         public boolean onMarkerClick(Marker marker) {
+                            mKeysDatabase.child(marker.getTag().toString()).addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    String title = dataSnapshot.child("title").getValue().toString();
+                                    String thumb = dataSnapshot.child("thumb").getValue().toString();
+                                    String date = dataSnapshot.child("date").getValue().toString();
+                                    String number = dataSnapshot.child("number_people_left").getValue().toString();
+                                    String score = dataSnapshot.child("score").getValue().toString();
+                                    MarkerDialog dialog = MarkerDialog.newInstance(thumb, title, date, score, number);
+                                    dialog.show(getSupportFragmentManager(), "TASK");
+                                }
 
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
                             return false;
                         }
                     });
