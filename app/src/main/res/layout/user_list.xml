@@ -37,12 +37,12 @@
 
             <ImageView
                 android:id="@+id/green"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_centerVertical="true"
-                android:layout_toEndOf="@+id/name_user"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignBottom="@+id/circle_image"
+                android:layout_alignEnd="@+id/circle_image"
                 android:src="@drawable/green"
-                android:visibility="invisible"/>
+                android:visibility="invisible" />
 
         </RelativeLayout>
 

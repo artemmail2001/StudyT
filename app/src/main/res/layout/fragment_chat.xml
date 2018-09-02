@@ -27,8 +27,8 @@
 
             <ImageView
                 android:id="@+id/green_chat"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_alignBottom="@+id/circle_chat"
                 android:layout_alignEnd="@+id/circle_chat"
                 android:src="@drawable/green" />
