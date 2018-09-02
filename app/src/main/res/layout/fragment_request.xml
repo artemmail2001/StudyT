@@ -8,30 +8,29 @@
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="200dp"
         android:layout_margin="5dp"
         app:cardCornerRadius="15dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="150dp">
+            android:layout_height="200dp">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/circle_req"
-                android:layout_width="93dp"
-                android:layout_height="80dp"
+                android:layout_width="111dp"
+                android:layout_height="94dp"
                 android:layout_alignParentTop="true"
-                android:layout_alignStart="@+id/accept_req"
-                android:layout_marginTop="14dp"
+                android:layout_centerHorizontal="true"
                 android:src="@drawable/avatar" />
 
             <TextView
                 android:id="@+id/name_req"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
+                android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="40dp"
+                android:layout_marginBottom="68dp"
                 android:text="Имя"
                 android:textColor="@color/black"
                 android:textSize="20dp" />
@@ -41,16 +40,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="38dp"
+                android:layout_marginBottom="12dp"
+                android:layout_toStartOf="@+id/circle_req"
+                android:background="@drawable/btn_accept"
                 android:text="Добавить" />
 
             <Button
                 android:id="@+id/decline_req"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignStart="@+id/name_req"
+                android:layout_alignTop="@+id/accept_req"
+                android:layout_toEndOf="@+id/circle_req"
+                android:background="@drawable/btn_decline"
                 android:text="Отклонить" />
 
         </RelativeLayout>

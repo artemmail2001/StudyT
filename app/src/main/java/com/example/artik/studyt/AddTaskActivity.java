@@ -2,33 +2,28 @@ package com.example.artik.studyt;
 
 import android.Manifest;
 import android.app.DatePickerDialog;
-import android.app.DialogFragment;
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.Spinner;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -40,14 +35,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.Calendar;
@@ -72,7 +65,8 @@ public class AddTaskActivity extends AppCompatActivity implements OnMapReadyCall
     private Boolean mLocationPermissionsGranted = false;
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
-    private EditText mTitle, mText, mNumberPeopleAdd, mScore;
+    private EditText mTitle, mText;
+    private Spinner mNumberPeopleAdd, mScore;
     private Button mDate, mSave;
     private DatabaseReference mUsersDatabase, mRoot;
     private DatePickerDialog.OnDateSetListener mDateSetListener;
@@ -89,8 +83,8 @@ public class AddTaskActivity extends AppCompatActivity implements OnMapReadyCall
         mGps = (ImageView) findViewById(R.id.ic_gps);
         mTitle = (EditText) findViewById(R.id.title_add);
         mText = (EditText) findViewById(R.id.text_add);
-        mNumberPeopleAdd = (EditText) findViewById(R.id.number_people_add);
-        mScore = (EditText)findViewById(R.id.score_add) ;
+        mNumberPeopleAdd = (Spinner) findViewById(R.id.number_people_add);
+        mScore = (Spinner)findViewById(R.id.score_add) ;
         mDate = (Button)findViewById(R.id.button_date);
         user_id = FirebaseAuth.getInstance().getCurrentUser().getUid().toString();
         mUsersDatabase = FirebaseDatabase.getInstance().getReference("Users").child(user_id);
@@ -155,8 +149,8 @@ public class AddTaskActivity extends AppCompatActivity implements OnMapReadyCall
                  final String name = mTitle.getText().toString();
                  final String text = mText.getText().toString();
                  final String date = mDate.getText().toString();
-                 final String score = mScore.getText().toString();
-                 final String number_people = mNumberPeopleAdd.getText().toString();
+                 final String score = mScore.getSelectedItem().toString();
+                 final String number_people = mNumberPeopleAdd.getSelectedItem().toString();
                  if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(text) && !date.equals("Выбрать дату")
                          && !TextUtils.isEmpty(score) && !TextUtils.isEmpty(number_people) && (C1 != 0) && (C2 != 0)) {
                      final int sc = Integer.parseInt(score);

@@ -1,13 +1,12 @@
 package com.example.artik.studyt;
 
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -175,6 +174,10 @@ public class UserProfileActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.hasChild("name") && dataSnapshot.hasChild("thumb_pic")) {
                     String name = dataSnapshot.child("name").getValue().toString();
+                    if(name.equals("Helper")){
+                        mSend.setEnabled(false);
+                        mSend.setVisibility(View.INVISIBLE);
+                    }
                     mName.setText(name);
                     String score = dataSnapshot.child("score").getValue().toString();
                     mScore.setText(score);

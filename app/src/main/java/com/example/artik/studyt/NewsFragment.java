@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -32,11 +33,14 @@ public class NewsFragment extends Fragment {
     private FirebaseUser mCurrentUser;
     private FirebaseRecyclerAdapter adapter;
     private DatabaseReference mUsersDatabase, mKeysDatabase;
+    private ProgressBar mProgressBar;
     private static final String TAG = "NewsFragment";
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.recycler_view, container, false);
+        mProgressBar = (ProgressBar)view.findViewById(R.id.progress_bar);
+        mProgressBar.setVisibility(View.VISIBLE);
         mRecyclerView = (RecyclerView)view.findViewById(R.id.recyclerView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -79,6 +83,7 @@ public class NewsFragment extends Fragment {
                         holder.setDisplayDate(date);
                         holder.setDisplayNumber(number_people_left);
                         holder.key = key;
+                        mProgressBar.setVisibility(View.GONE);
                     }
 
                     @Override
