@@ -43,7 +43,7 @@ import id.zelory.compressor.Compressor;
 
 public class SettingsActivity extends AppCompatActivity implements View.OnClickListener{
     private EditText mName, mS1, mS2;
-    private DatabaseReference mUserDatabase;
+    private DatabaseReference mUserDatabase, mRoot;
     private CircleImageView mCircle;
     private Button mChangeAva, mChangeName, mS1Change, mS2Change;
     private static final int Pick_image = 1;
@@ -51,6 +51,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     private ProgressDialog mProgressDialog;
     private FirebaseUser mUser;
     private Toolbar mSettingsToolbar;
+    private String uid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,8 +71,9 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         mS2Change = (Button)findViewById(R.id.change_s2);
         mUser = FirebaseAuth.getInstance().getCurrentUser();
         mImageStor = FirebaseStorage.getInstance().getReference();
-        final String uid = mUser.getUid();
+        uid = mUser.getUid();
         mUserDatabase = FirebaseDatabase.getInstance().getReference("Users").child(uid);
+        mRoot = FirebaseDatabase.getInstance().getReference();
         mUserDatabase.keepSynced(true);
         mChangeAva.setOnClickListener(this);
         mChangeName.setOnClickListener(this);
@@ -139,8 +141,23 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 startActivityForResult(Intent.createChooser(intent, "SELECT IMAGE"), Pick_image);
                 break;
             case R.id.change_name:
-                String name = mName.getText().toString();
+                final String name = mName.getText().toString();
                 mUserDatabase.child("name").setValue(name);
+                mRoot.child("Issues").child(uid).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for(DataSnapshot snapshot: dataSnapshot.getChildren()){
+                            String key = snapshot.getKey();
+                            mRoot.child("Issues").child(uid).child(key).child("name").setValue(name);
+                            mRoot.child("Keys").child(key).child("name").setValue(name);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
                 break;
             case R.id.change_s1:
                 String s1 = mS1.getText().toString();
@@ -186,7 +203,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                                     @Override
                                     public void onComplete(@NonNull final Task<UploadTask.TaskSnapshot> task_t) {
                                         if(task_t.isSuccessful()){
-                                            String download1 = task_t.getResult().getDownloadUrl().toString();
+                                            final String download1 = task_t.getResult().getDownloadUrl().toString();
                                             Map map = new HashMap();
                                             map.put("picture", download);
                                             map.put("thumb_pic", download1);
@@ -194,6 +211,21 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                                                 @Override
                                                 public void onComplete(@NonNull Task t) {
                                                     if(t.isSuccessful()) {
+                                                        mRoot.child("Issues").child(uid).addValueEventListener(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                                for(DataSnapshot snapshot: dataSnapshot.getChildren()){
+                                                                    String key = snapshot.getKey();
+                                                                    mRoot.child("Issues").child(uid).child(key).child("thumb").setValue(download1);
+                                                                    mRoot.child("Keys").child(key).child("thumb").setValue(download1);
+                                                                }
+                                                            }
+
+                                                            @Override
+                                                            public void onCancelled(DatabaseError databaseError) {
+
+                                                            }
+                                                        });
                                                         mProgressDialog.dismiss();
                                                     }
                                                 }

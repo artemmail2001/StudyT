@@ -49,8 +49,6 @@ public class NewsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         if (mLocationPermissionsGranted) {
-            //getDeviceLocation();
-
             if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
                     android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -106,8 +104,7 @@ public class NewsActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot snapshot: dataSnapshot.getChildren()){
                     if(snapshot.getKey().equals(key)){
-                        mJoin.setText("Вы присоединились к этому событию");
-                        mJoin.setEnabled(false);
+                        mJoin.setText("Выйти из события");
                     }
                 }
             }
@@ -132,7 +129,7 @@ public class NewsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     mJoin.setEnabled(false);
                     mJoin.setVisibility(View.INVISIBLE);
                 }
-                if(number_people_left.equals("0")){
+                if(number_people_left.equals("0") && mJoin.getText().equals("Присоединиться")){
                     mJoin.setEnabled(false);
                 }
                 mDate.setText(date);
@@ -159,17 +156,32 @@ public class NewsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     mKeysDatabase.runTransaction(new Transaction.Handler() {
                         @Override
                         public Transaction.Result doTransaction(MutableData mutableData) {
-                            Issue issue = mutableData.getValue(Issue.class);
+                            final Issue issue = mutableData.getValue(Issue.class);
                             if (issue == null) {
                                 return Transaction.success(mutableData);
                             }
-                            int a = issue.number_people - issue.number_people_left + 1;
-                            issue.number_people_left = issue.number_people_left - 1;
+                            final int a = issue.number_people;
                             final int sc = issue.getScore();
+                            issue.number_people_left = issue.number_people_left - 1;
                             mRoot.child("Issues").child(issue.getUid()).child(issue.getKey()).setValue(issue);
                             mutableData.setValue(issue);
-                            mRoot.child("Participants").child(issue.getUid()).child(issue.getKey()).child("uid_" + a).setValue(uid);
-                            mRoot.child("Events").child(uid).child(issue.getKey()).child("position").setValue("uid_" + a);
+                            mRoot.child("Participants").child(issue.getUid()).child(issue.getKey()).runTransaction(new Transaction.Handler() {
+                                @Override
+                                public Transaction.Result doTransaction(MutableData mutableData) {
+                                    for(int i = 1; i<=a; i++) {
+                                        if (mutableData.child("uid_" + i).getValue().toString().equals("null")){
+                                            mutableData.child("uid_" + i).setValue(uid);
+                                            mRoot.child("Events").child(uid).child(issue.getKey()).child("position").setValue("uid_" + i);
+                                            return Transaction.success(mutableData);
+                                        }
+                                    }
+                                    return Transaction.success(mutableData);
+                                }
+
+                                @Override
+                                public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                                }
+                            });
                             mRoot.child("Users").child(uid).runTransaction(new Transaction.Handler() {
                                 @Override
                                 public Transaction.Result doTransaction(MutableData mutableData) {
@@ -192,8 +204,65 @@ public class NewsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                         @Override
                         public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-                            String k = dataSnapshot.child("key").getValue().toString();
-                            mJoin.setText("Вы присоединились к этому событию");
+                            mJoin.setText("Выйти из события");
+                            mJoin.setEnabled(true);
+                        }
+                    });
+                }
+                else if(mJoin.getText().toString().equals("Выйти из события")){
+                    mKeysDatabase.runTransaction(new Transaction.Handler() {
+                        @Override
+                        public Transaction.Result doTransaction(MutableData mutableData) {
+                            final Issue issue = mutableData.getValue(Issue.class);
+                            if (issue == null) {
+                                return Transaction.success(mutableData);
+                            }
+                            final int a = issue.number_people;
+                            final int sc = issue.getScore();
+                            issue.number_people_left = issue.number_people_left + 1;
+                            mRoot.child("Issues").child(issue.getUid()).child(issue.getKey()).setValue(issue);
+                            mutableData.setValue(issue);
+                            mRoot.child("Participants").child(issue.getUid()).child(issue.getKey()).runTransaction(new Transaction.Handler() {
+                                @Override
+                                public Transaction.Result doTransaction(MutableData mutableData) {
+                                    for(int i = 1; i<=a; i++) {
+                                        if (mutableData.child("uid_" + i).getValue().toString().equals(uid)){
+                                            mutableData.child("uid_" + i).setValue("null");
+                                            mRoot.child("Events").child(uid).child(issue.getKey()).child("position").removeValue();
+                                            return Transaction.success(mutableData);
+                                        }
+                                    }
+                                    return Transaction.success(mutableData);
+                                }
+
+                                @Override
+                                public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                                }
+                            });
+                            mRoot.child("Users").child(uid).runTransaction(new Transaction.Handler() {
+                                @Override
+                                public Transaction.Result doTransaction(MutableData mutableData) {
+                                    User user = mutableData.getValue(User.class);
+                                    if (user == null) {
+                                        return Transaction.success(mutableData);
+                                    }
+                                    int a = user.getScore() - sc;
+                                    mRoot.child("Users").child(uid).child("score").setValue(a);
+                                    return Transaction.success(mutableData);
+                                }
+
+                                @Override
+                                public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+
+                                }
+                            });
+                            return Transaction.success(mutableData);
+                        }
+
+                        @Override
+                        public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                            mJoin.setText("Присоединиться");
+                            mJoin.setEnabled(true);
                         }
                     });
                 }
