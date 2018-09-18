@@ -13,8 +13,9 @@ public class Issue {
     private String title;
     private String uid;
     private String key;
+    private String time;
 
-    public Issue(String date, String name, String text, String thumb, double latitude, double longitude, int number_people, int number_people_left, int score, String title, String uid, String key) {
+    public Issue(String date, String name, String text, String thumb, double latitude, double longitude, int number_people, int number_people_left, int score, String title, String uid, String key, String time) {
         this.date = date;
         this.name = name;
         this.text = text;
@@ -27,8 +28,17 @@ public class Issue {
         this.title = title;
         this.uid = uid;
         this.key = key;
+        this.time = time;
     }
     public Issue() {
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 
     public String getKey() {
