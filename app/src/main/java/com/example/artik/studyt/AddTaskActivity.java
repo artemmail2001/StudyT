@@ -2,6 +2,7 @@ package com.example.artik.studyt;
 
 import android.Manifest;
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -24,6 +25,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TimePicker;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -67,7 +69,7 @@ public class AddTaskActivity extends AppCompatActivity implements OnMapReadyCall
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private EditText mTitle, mText;
     private Spinner mNumberPeopleAdd, mScore;
-    private Button mDate, mSave;
+    private Button mDate, mSave, mTime;
     private DatabaseReference mUsersDatabase, mRoot;
     private DatePickerDialog.OnDateSetListener mDateSetListener;
     private String user_id;
@@ -141,6 +143,29 @@ public class AddTaskActivity extends AppCompatActivity implements OnMapReadyCall
             }
         };
 
+        mTime = (Button)findViewById(R.id.time_button);
+        mTime.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Calendar cal = Calendar.getInstance();
+                int min = cal.get(Calendar.MINUTE);
+                int hour = cal.get(Calendar.HOUR_OF_DAY);
+
+                TimePickerDialog dialog = new TimePickerDialog(
+                        AddTaskActivity.this,
+                        android.R.style.Theme_Holo_Light_Dialog_MinWidth,
+                        new TimePickerDialog.OnTimeSetListener() {
+                            @Override
+                            public void onTimeSet(TimePicker timePicker, int i, int m) {
+                                mTime.setText(i + ":" + m);
+                            }
+                        },
+                        hour, min, true);
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialog.show();
+            }
+        });
+
         mSave = (Button)findViewById(R.id.button_save);
         mSave.setOnClickListener(new View.OnClickListener() {
              @Override
@@ -150,8 +175,9 @@ public class AddTaskActivity extends AppCompatActivity implements OnMapReadyCall
                  final String text = mText.getText().toString();
                  final String date = mDate.getText().toString();
                  final String score = mScore.getSelectedItem().toString();
+                 final String time = mTime.getText().toString();
                  final String number_people = mNumberPeopleAdd.getSelectedItem().toString();
-                 if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(text) && !date.equals("Выбрать дату")
+                 if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(text) && !date.equals("Выберите дату") && !time.equals("Выберите время")
                          && !TextUtils.isEmpty(score) && !TextUtils.isEmpty(number_people) && (C1 != 0) && (C2 != 0)) {
                      final int sc = Integer.parseInt(score);
                      final int np = Integer.parseInt(number_people);
@@ -163,6 +189,7 @@ public class AddTaskActivity extends AppCompatActivity implements OnMapReadyCall
                      issueMap.put("title", name);
                      issueMap.put("text", text);
                      issueMap.put("date", date);
+                     issueMap.put("time", time);
                      issueMap.put("score", sc);
                      issueMap.put("number_people", np);
                      issueMap.put("number_people_left", np);

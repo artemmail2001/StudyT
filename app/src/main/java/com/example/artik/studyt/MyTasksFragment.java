@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -102,6 +103,7 @@ public class MyTasksFragment extends Fragment {
         private TextView mName, mDate, mNumber, mScore;
         private CircleImageView mImageCircle;
         private Issue is;
+        private ImageView mBlock;
         public TasksHolder(View itemView) {
             super(itemView);
             mName = (TextView)itemView.findViewById(R.id.title_news);
@@ -109,10 +111,14 @@ public class MyTasksFragment extends Fragment {
             mDate = (TextView)itemView.findViewById(R.id.date_news);
             mNumber = (TextView)itemView.findViewById(R.id.number_people_news);
             mScore = (TextView)itemView.findViewById(R.id.score_news);
+            mBlock = (ImageView)itemView.findViewById(R.id.block_news);
             itemView.setOnClickListener(this);
         }
         public void bind(Issue i){
             is = i;
+            if(is.getNumber_people_left() == 0){
+                mBlock.setVisibility(View.VISIBLE);
+            }
             mName.setText(is.getTitle());
             String image = is.getThumb();
             if (!image.equals("null")) {

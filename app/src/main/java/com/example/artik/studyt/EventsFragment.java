@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -77,6 +78,10 @@ public class EventsFragment extends Fragment {
                         if(!image.equals("null")) {
                             holder.setUserImage(image);
                         }
+                        int a = Integer.parseInt(number_people_left);
+                        if(a == 0){
+                            holder.setBlock();
+                        }
                         holder.setDisplayScore(score);
                         holder.setDisplayDate(date);
                         holder.setDisplayNumber(number_people_left);
@@ -110,6 +115,7 @@ public class EventsFragment extends Fragment {
         private CircleImageView mImageCircle;
         private String key;
         private String user_id;
+        private ImageView mBlock;
         public EventsHolder(View itemView) {
             super(itemView);
             mName = (TextView)itemView.findViewById(R.id.title_news);
@@ -117,7 +123,11 @@ public class EventsFragment extends Fragment {
             mDate = (TextView)itemView.findViewById(R.id.date_news);
             mNumber = (TextView)itemView.findViewById(R.id.number_people_news);
             mScore = (TextView)itemView.findViewById(R.id.score_news);
+            mBlock = (ImageView)itemView.findViewById(R.id.block_news);
             itemView.setOnClickListener(this);
+        }
+        public void setBlock(){
+            mBlock.setVisibility(View.VISIBLE);
         }
         public void setDisplayTitle(String title){
             mName.setText(title);

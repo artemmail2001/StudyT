@@ -19,11 +19,11 @@
             android:layout_height="100dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
             android:layout_marginTop="73dp"
             android:background="@drawable/edit_text"
             android:hint="Описание"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
             android:maxLines="6"
             android:textAlignment="center"
             android:textColor="@color/black"
@@ -46,21 +46,23 @@
             android:textSize="18dp" />
 
         <TextView
+            android:id="@+id/text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignTop="@+id/button_date"
-            android:layout_marginStart="59dp"
+            android:layout_alignBaseline="@+id/button_date"
+            android:layout_alignEnd="@+id/text1"
             android:text="Участники"
             android:textAlignment="center"
             android:textColor="@color/black"
             android:textSize="15sp" />
 
         <TextView
+            android:id="@+id/text1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/button_date"
-            android:layout_centerHorizontal="true"
+            android:layout_alignBottom="@+id/score_add"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="17dp"
             android:text="points"
             android:textAlignment="center"
             android:textColor="@color/black"
@@ -70,10 +72,11 @@
             android:id="@+id/number_people_add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:spinnerMode="dialog"
-            android:layout_alignBottom="@+id/button_date"
-            android:layout_alignStart="@+id/title_add"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@+id/text"
+            android:layout_marginEnd="98dp"
             android:entries="@array/numb"
+            android:spinnerMode="dialog"
             android:textAlignment="center"
             android:textColor="@color/black"
             android:textSize="15sp" />
@@ -81,24 +84,39 @@
         <android.support.v7.widget.AppCompatSpinner
             android:id="@+id/score_add"
             android:layout_width="wrap_content"
-            android:spinnerMode="dialog"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/number_people_add"
-            android:layout_centerHorizontal="true"
+            android:layout_alignBaseline="@+id/time_button"
+            android:layout_alignEnd="@+id/number_people_add"
             android:entries="@array/scr"
+            android:spinnerMode="dialog"
             android:textAlignment="center"
             android:textColor="@color/black"
+            android:layout_below="@+id/number_people_add"
             android:textSize="15sp" />
 
         <Button
             android:id="@+id/button_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignEnd="@+id/text_add"
+            android:layout_alignEnd="@+id/time_button"
             android:layout_alignParentTop="true"
-            android:layout_marginTop="186dp"
+            android:layout_marginTop="184dp"
             android:background="@drawable/button_shape"
             android:text="Выберите дату"
+            android:textAlignment="center"
+            android:layout_marginEnd="5dp"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/time_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="15dp"
+            android:background="@drawable/button_shape"
+            android:layout_below="@id/button_date"
+            android:text="Выберите время"
             android:textAlignment="center"
             android:textSize="15sp" />
 
@@ -108,7 +126,7 @@
             android:layout_height="150dp"
             android:layout_alignParentStart="true"
             android:layout_margin="5dp"
-            android:layout_below="@+id/number_people_add"
+            android:layout_below="@+id/time_button"
             app:cardCornerRadius="15dp">
 
             <RelativeLayout
@@ -144,8 +162,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_below="@+id/card"
-            android:background="@drawable/button_shape"
             android:layout_margin="5dp"
+            android:background="@drawable/button_shape"
             android:text="Сохранить" />
     </RelativeLayout>
 </LinearLayout>

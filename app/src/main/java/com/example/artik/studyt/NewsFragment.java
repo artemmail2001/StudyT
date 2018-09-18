@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -23,6 +24,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
+
+import java.util.Calendar;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -76,8 +79,12 @@ public class NewsFragment extends Fragment {
                         String score = dataSnapshot.child("score").getValue().toString();
                         String number_people_left = dataSnapshot.child("number_people_left").getValue().toString();
                         holder.setDisplayName(name);
+                        int a = Integer.parseInt(number_people_left);
                         if(!image.equals("null")) {
                             holder.setUserImage(image);
+                        }
+                        if(a == 0){
+                            holder.setBlocked();
                         }
                         holder.setDisplayScore(score);
                         holder.setDisplayDate(date);
@@ -111,6 +118,7 @@ public class NewsFragment extends Fragment {
         private TextView mName, mDate, mNumber, mScore;
         private CircleImageView mImageCircle;
         private String key;
+        private ImageView mBlock;
         public NewsHolder(View itemView) {
             super(itemView);
             mName = (TextView)itemView.findViewById(R.id.title_news);
@@ -118,7 +126,11 @@ public class NewsFragment extends Fragment {
             mDate = (TextView)itemView.findViewById(R.id.date_news);
             mNumber = (TextView)itemView.findViewById(R.id.number_people_news);
             mScore = (TextView)itemView.findViewById(R.id.score_news);
+            mBlock = (ImageView)itemView.findViewById(R.id.block_news);
             itemView.setOnClickListener(this);
+        }
+        public void setBlocked(){
+            mBlock.setVisibility(View.VISIBLE);
         }
         public void setDisplayName(String name){
             mName.setText(name);

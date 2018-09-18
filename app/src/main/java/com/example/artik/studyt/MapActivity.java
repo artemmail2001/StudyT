@@ -145,7 +145,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                     String score = dataSnapshot.child("score").getValue().toString();
                                     String key = marker.getTag().toString();
                                     MarkerDialog dialog = MarkerDialog.newInstance(thumb, title, date, score, number, key);
-                                    dialog.show(getSupportFragmentManager(), "TASK");
+                                    try {
+                                        dialog.show(getSupportFragmentManager(), "TASK");
+                                    }catch (IllegalStateException e){
+
+                                    }
                                 }
 
                                 @Override
