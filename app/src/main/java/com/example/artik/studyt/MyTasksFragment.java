@@ -125,7 +125,7 @@ public class MyTasksFragment extends Fragment {
                 Picasso.get().load(image).into(mImageCircle);
             }
             mNumber.setText("осталось " + is.getNumber_people_left() + " мест(-а)");
-            mDate.setText(is.getDate());
+            mDate.setText(is.getTime() + "  " + is.getDate());
             mScore.setText(is.getScore() + " points");
 
         }

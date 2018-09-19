@@ -124,6 +124,7 @@ public class NewsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 String number_people_left = dataSnapshot.child("number_people_left").getValue().toString();
                 String title = dataSnapshot.child("title").getValue().toString();
                 String text = dataSnapshot.child("text").getValue().toString();
+                String time = dataSnapshot.child("time").getValue().toString();
                 final String key_uid = dataSnapshot.child("uid").getValue().toString();
                 if(key_uid.equals(uid)) {
                     mJoin.setEnabled(false);
@@ -132,7 +133,7 @@ public class NewsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if(number_people_left.equals("0") && mJoin.getText().equals("Присоединиться")){
                     mJoin.setEnabled(false);
                 }
-                mDate.setText(date);
+                mDate.setText(time + "  " + date);
                 if(!image.equals("null")){
                     Picasso.get().load(image).into(mCircle);
                 }

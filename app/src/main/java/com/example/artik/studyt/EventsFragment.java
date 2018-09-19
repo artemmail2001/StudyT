@@ -74,6 +74,7 @@ public class EventsFragment extends Fragment {
                         String score = dataSnapshot.child("score").getValue().toString();
                         String number_people_left = dataSnapshot.child("number_people_left").getValue().toString();
                         String user_id = dataSnapshot.child("uid").getValue().toString();
+                        String time = dataSnapshot.child("time").getValue().toString();
                         holder.setDisplayTitle(name);
                         if(!image.equals("null")) {
                             holder.setUserImage(image);
@@ -83,7 +84,7 @@ public class EventsFragment extends Fragment {
                             holder.setBlock();
                         }
                         holder.setDisplayScore(score);
-                        holder.setDisplayDate(date);
+                        holder.setDisplayDate(time, date);
                         holder.setDisplayNumber(number_people_left);
                         holder.key = key;
                         holder.user_id = user_id;
@@ -140,8 +141,8 @@ public class EventsFragment extends Fragment {
         public void setDisplayNumber(String num_left){
             mNumber.setText("осталось " + num_left + " мест(-а)");
         }
-        public void setDisplayDate(String date){
-            mDate.setText(date);
+        public void setDisplayDate(String time, String date){
+            mDate.setText(time + "  " + date);
         }
         public void setDisplayScore(String score){
             mScore.setText(score + " points");
