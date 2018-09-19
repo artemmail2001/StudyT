@@ -1,6 +1,7 @@
 package com.example.artik.studyt;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -79,6 +80,7 @@ public class NewsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Button mJoin;
     private DatabaseReference mRoot;
     private String uid;
+    private ProgressDialog mDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -87,6 +89,7 @@ public class NewsActivity extends AppCompatActivity implements OnMapReadyCallbac
         final String key = getIntent().getStringExtra("key");
         mGps = (ImageView) findViewById(R.id.ic_gps);
         mMapToolbar = (Toolbar) findViewById(R.id.news_act_app_bar);
+        mDialog = new ProgressDialog(this);
         setSupportActionBar(mMapToolbar);
         mName = (TextView)findViewById(R.id.name_news_act);
         mDate = (TextView)findViewById(R.id.date_news_act);
@@ -153,6 +156,9 @@ public class NewsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onClick(View v) {
                 mJoin.setEnabled(false);
+                mDialog.setTitle("Сохранение");
+                mDialog.setCanceledOnTouchOutside(false);
+                mDialog.show();
                 if(mJoin.getText().equals("Присоединиться")) {
                     mKeysDatabase.runTransaction(new Transaction.Handler() {
                         @Override
@@ -168,15 +174,15 @@ public class NewsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             mutableData.setValue(issue);
                             mRoot.child("Participants").child(issue.getUid()).child(issue.getKey()).runTransaction(new Transaction.Handler() {
                                 @Override
-                                public Transaction.Result doTransaction(MutableData mutableData) {
+                                public Transaction.Result doTransaction(MutableData mutableData1) {
                                     for(int i = 1; i<=a; i++) {
-                                        if (mutableData.child("uid_" + i).getValue().toString().equals("null")){
-                                            mutableData.child("uid_" + i).setValue(uid);
+                                        if (mutableData1.child("uid_" + i).getValue().toString().equals("null")){
+                                            mutableData1.child("uid_" + i).setValue(uid);
                                             mRoot.child("Events").child(uid).child(issue.getKey()).child("position").setValue("uid_" + i);
-                                            return Transaction.success(mutableData);
+                                            return Transaction.success(mutableData1);
                                         }
                                     }
-                                    return Transaction.success(mutableData);
+                                    return Transaction.success(mutableData1);
                                 }
 
                                 @Override
@@ -185,19 +191,18 @@ public class NewsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             });
                             mRoot.child("Users").child(uid).runTransaction(new Transaction.Handler() {
                                 @Override
-                                public Transaction.Result doTransaction(MutableData mutableData) {
-                                    User user = mutableData.getValue(User.class);
+                                public Transaction.Result doTransaction(MutableData mutableData2) {
+                                    User user = mutableData2.getValue(User.class);
                                     if (user == null) {
-                                        return Transaction.success(mutableData);
+                                        return Transaction.success(mutableData2);
                                     }
                                     int a = user.getScore() + sc;
                                     mRoot.child("Users").child(uid).child("score").setValue(a);
-                                    return Transaction.success(mutableData);
+                                    return Transaction.success(mutableData2);
                                 }
 
                                 @Override
                                 public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-
                                 }
                             });
                             return Transaction.success(mutableData);
@@ -207,6 +212,7 @@ public class NewsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
                             mJoin.setText("Выйти из события");
                             mJoin.setEnabled(true);
+                            mDialog.dismiss();
                         }
                     });
                 }
@@ -225,15 +231,15 @@ public class NewsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             mutableData.setValue(issue);
                             mRoot.child("Participants").child(issue.getUid()).child(issue.getKey()).runTransaction(new Transaction.Handler() {
                                 @Override
-                                public Transaction.Result doTransaction(MutableData mutableData) {
+                                public Transaction.Result doTransaction(MutableData mutableData1) {
                                     for(int i = 1; i<=a; i++) {
-                                        if (mutableData.child("uid_" + i).getValue().toString().equals(uid)){
-                                            mutableData.child("uid_" + i).setValue("null");
+                                        if (mutableData1.child("uid_" + i).getValue().toString().equals(uid)){
+                                            mutableData1.child("uid_" + i).setValue("null");
                                             mRoot.child("Events").child(uid).child(issue.getKey()).child("position").removeValue();
-                                            return Transaction.success(mutableData);
+                                            return Transaction.success(mutableData1);
                                         }
                                     }
-                                    return Transaction.success(mutableData);
+                                    return Transaction.success(mutableData1);
                                 }
 
                                 @Override
@@ -242,14 +248,14 @@ public class NewsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             });
                             mRoot.child("Users").child(uid).runTransaction(new Transaction.Handler() {
                                 @Override
-                                public Transaction.Result doTransaction(MutableData mutableData) {
-                                    User user = mutableData.getValue(User.class);
+                                public Transaction.Result doTransaction(MutableData mutableData2) {
+                                    User user = mutableData2.getValue(User.class);
                                     if (user == null) {
-                                        return Transaction.success(mutableData);
+                                        return Transaction.success(mutableData2);
                                     }
                                     int a = user.getScore() - sc;
                                     mRoot.child("Users").child(uid).child("score").setValue(a);
-                                    return Transaction.success(mutableData);
+                                    return Transaction.success(mutableData2);
                                 }
 
                                 @Override
@@ -264,6 +270,7 @@ public class NewsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
                             mJoin.setText("Присоединиться");
                             mJoin.setEnabled(true);
+                            mDialog.dismiss();
                         }
                     });
                 }

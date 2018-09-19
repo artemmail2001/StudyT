@@ -2,6 +2,7 @@ package com.example.artik.studyt;
 
 import android.Manifest;
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -26,6 +27,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -74,11 +76,13 @@ public class AddTaskActivity extends AppCompatActivity implements OnMapReadyCall
     private DatePickerDialog.OnDateSetListener mDateSetListener;
     private String user_id;
     private String thumb, n;
+    private ProgressDialog mDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_adding_task);
         mMapToolbar = (Toolbar) findViewById(R.id.add_app_bar);
+        mDialog = new ProgressDialog(this);
         setSupportActionBar(mMapToolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -131,9 +135,9 @@ public class AddTaskActivity extends AppCompatActivity implements OnMapReadyCall
                 String date = day + "." + month + "." + year;
                 if(month<10 && day<10) {
                     date = "0" + day + ".0" + month + "." + year;
-                }else if(month<10 && day>10){
+                }else if(month<10 && day>=10){
                     date = day + ".0" + month + "." + year;
-                } else if(month>10 && day<10){
+                } else if(month>=10 && day<10){
                     date = "0" + day + "." + month + "." + year;
                 } else if(month>10 && day>10){
                     date = day + "." + month + "." + year;
@@ -160,9 +164,9 @@ public class AddTaskActivity extends AppCompatActivity implements OnMapReadyCall
                                 String t = i + ":" + m;
                                 if(i<10 && m<10) {
                                     t = "0" + i + ":0" + m;
-                                }else if(i<10 && m>10){
+                                }else if(i<10 && m>=10){
                                     t = "0" + i + ":" + m;
-                                } else if(i>10 && m<10){
+                                } else if(i>=10 && m<10){
                                     t = i + ":0" + m;
                                 } else if(i>10 && m>10){
                                     t = i + ":" + m;
@@ -180,6 +184,9 @@ public class AddTaskActivity extends AppCompatActivity implements OnMapReadyCall
         mSave.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {
+                 mDialog.setTitle("Сохранение");
+                 mDialog.setCanceledOnTouchOutside(false);
+                 mDialog.show();
                  int a = 0;
                  mSave.setEnabled(false);
                  Calendar cal = Calendar.getInstance();
@@ -193,14 +200,16 @@ public class AddTaskActivity extends AppCompatActivity implements OnMapReadyCall
                  final String score = mScore.getSelectedItem().toString();
                  final String time = mTime.getText().toString();
                  final String number_people = mNumberPeopleAdd.getSelectedItem().toString();
-                 String dd1 = date.substring(0, 2);
-                 int dd = Integer.parseInt(dd1);
-                 String mm1 = date.substring(3, 5);
-                 int mm = Integer.parseInt(mm1);
-                 String yy1 = date.substring(6);
-                 int yy = Integer.parseInt(yy1);
-                 if((month > mm && year >= yy) || (day>=dd && month==mm && year==yy)){
-                     a = 1;
+                 if(!date.equals("Выберите дату")) {
+                     String dd1 = date.substring(0, 2);
+                     int dd = Integer.parseInt(dd1);
+                     String mm1 = date.substring(3, 5);
+                     int mm = Integer.parseInt(mm1);
+                     String yy1 = date.substring(6);
+                     int yy = Integer.parseInt(yy1);
+                     if ((month > mm && year >= yy) || (day >= dd && month == mm && year == yy)) {
+                         a = 1;
+                     }
                  }
                  if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(text) && !date.equals("Выберите дату") && !time.equals("Выберите время") && a == 0
                          && !TextUtils.isEmpty(score) && !TextUtils.isEmpty(number_people) && (C1 != 0) && (C2 != 0)) {
@@ -239,12 +248,18 @@ public class AddTaskActivity extends AppCompatActivity implements OnMapReadyCall
                                          mRoot.child("Participants").child(user_id).child(push_id).child("uid_" + i).setValue("null");
                                      }
                                      mSave.setVisibility(View.INVISIBLE);
+                                     mDialog.dismiss();
                                      Intent intent = new Intent(AddTaskActivity.this, MainActivity.class);
                                      startActivity(intent);
                                  }
                              });
                          }
                      });
+                 }
+                 else{
+                     mSave.setEnabled(true);
+                     mDialog.dismiss();
+                     Toast.makeText(AddTaskActivity.this, "Проверьте правильность введённых данных", Toast.LENGTH_SHORT).show();
                  }
              }
         });

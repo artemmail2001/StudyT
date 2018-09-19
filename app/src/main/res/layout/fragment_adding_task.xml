@@ -87,35 +87,31 @@
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@+id/time_button"
             android:layout_alignEnd="@+id/number_people_add"
+            android:layout_below="@+id/number_people_add"
             android:entries="@array/scr"
             android:spinnerMode="dialog"
             android:textAlignment="center"
             android:textColor="@color/black"
-            android:layout_below="@+id/number_people_add"
             android:textSize="15sp" />
 
         <Button
             android:id="@+id/button_date"
-            android:layout_width="wrap_content"
+            android:layout_width="170dp"
             android:layout_height="wrap_content"
-            android:layout_alignEnd="@+id/time_button"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="184dp"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/text_add"
             android:background="@drawable/button_shape"
             android:text="Выберите дату"
             android:textAlignment="center"
-            android:layout_marginEnd="5dp"
             android:textSize="15sp" />
 
         <Button
             android:id="@+id/time_button"
-            android:layout_width="wrap_content"
+            android:layout_width="170dp"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="15dp"
+            android:layout_below="@+id/button_date"
             android:background="@drawable/button_shape"
-            android:layout_below="@id/button_date"
             android:text="Выберите время"
             android:textAlignment="center"
             android:textSize="15sp" />
@@ -125,7 +121,7 @@
             android:layout_width="match_parent"
             android:layout_height="150dp"
             android:layout_alignParentStart="true"
-            android:layout_margin="5dp"
+            android:layout_centerVertical="true"
             android:layout_below="@+id/time_button"
             app:cardCornerRadius="15dp">
 
