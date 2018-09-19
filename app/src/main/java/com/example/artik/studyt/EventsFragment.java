@@ -2,12 +2,14 @@ package com.example.artik.studyt;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,14 +29,19 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class EventsFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private FirebaseUser mCurrentUser;
-    private DatabaseReference mKeysDatabase;
-    private FirebaseRecyclerAdapter adapter;
-    private Query query;
+    private DatabaseReference mKeysDatabase, mEventsDatabase;
+    private RecyclerView.Adapter mAdapter;
+    private Issue issue;
+    private List<Issue> mIssues;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -44,80 +51,89 @@ public class EventsFragment extends Fragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
         final String uid = mCurrentUser.getUid();
+        mEventsDatabase = FirebaseDatabase.getInstance().getReference("Events").child(uid);
         mKeysDatabase = FirebaseDatabase.getInstance().getReference("Keys");
-        mKeysDatabase.keepSynced(true);
-        query = FirebaseDatabase.getInstance().getReference("Events").child(uid);
-        FirebaseRecyclerOptions<Position> options =
-                new FirebaseRecyclerOptions.Builder<Position>()
-                        .setQuery(query, Position.class)
-                        .build();
-        adapter = new FirebaseRecyclerAdapter<Position, EventsHolder>(options) {
-
-            @NonNull
-            @Override
-            public EventsHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.fragment_news, parent, false);
-
-                return new EventsHolder(view);
-            }
-
-            @Override
-            protected void onBindViewHolder(@NonNull final EventsHolder holder, int position, @NonNull Position pos) {
-                final String key = getRef(position).getKey();
-                mKeysDatabase.child(key).addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        String date = dataSnapshot.child("date").getValue().toString();
-                        String image = dataSnapshot.child("thumb").getValue().toString();
-                        String name = dataSnapshot.child("title").getValue().toString();
-                        String score = dataSnapshot.child("score").getValue().toString();
-                        String number_people_left = dataSnapshot.child("number_people_left").getValue().toString();
-                        String user_id = dataSnapshot.child("uid").getValue().toString();
-                        String time = dataSnapshot.child("time").getValue().toString();
-                        holder.setDisplayTitle(name);
-                        if(!image.equals("null")) {
-                            holder.setUserImage(image);
-                        }
-                        int a = Integer.parseInt(number_people_left);
-                        if(a == 0){
-                            holder.setBlock();
-                        }
-                        holder.setDisplayScore(score);
-                        holder.setDisplayDate(time, date);
-                        holder.setDisplayNumber(number_people_left);
-                        holder.key = key;
-                        holder.user_id = user_id;
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-
-            }
-        };
-        mRecyclerView.setAdapter(adapter);
+        mIssues = new ArrayList<>();
         return view;
     }
     @Override
     public void onStart(){
         super.onStart();
-        adapter.startListening();
+        mEventsDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                mIssues.clear();
+                for(DataSnapshot snapshot: dataSnapshot.getChildren()){
+                    final String key = snapshot.getKey();
+                    Log.d("lol", key);
+                    mKeysDatabase.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot1) {
+                            if(dataSnapshot1.hasChild(key)) {
+                                mKeysDatabase.child(key).addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot2) {
+                                        issue = dataSnapshot2.getValue(Issue.class);
+                                        mIssues.add(issue);
+                                        mAdapter = new TaskAdapter(mIssues);
+                                        mRecyclerView.setAdapter(mAdapter);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
+                            }
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
-    @Override
-    public void onStop() {
-        super.onStop();
-        adapter.stopListening();
+    private class TaskAdapter extends RecyclerView.Adapter<TasksHolder>{
+        private LayoutInflater mLayoutInflater;
+        private List<Issue> mI;
+        public TaskAdapter(List<Issue> issues) {
+            mI = issues;
+        }
+        @NonNull
+        @Override
+        public TasksHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            mLayoutInflater = LayoutInflater.from(getActivity());
+            View view = mLayoutInflater.inflate(R.layout.fragment_news, parent, false);
+            return new TasksHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull TasksHolder holder, int position) {
+            Issue iss = mI.get(position);
+            holder.bind(iss);
+        }
+
+        @Override
+        public int getItemCount() {
+            return mIssues.size();
+        }
     }
-    private class EventsHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    private class TasksHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView mName, mDate, mNumber, mScore;
         private CircleImageView mImageCircle;
-        private String key;
-        private String user_id;
+        private Issue is;
         private ImageView mBlock;
-        public EventsHolder(View itemView) {
+        private int click = 0;
+        public TasksHolder(View itemView) {
             super(itemView);
             mName = (TextView)itemView.findViewById(R.id.title_news);
             mImageCircle = (CircleImageView)itemView.findViewById(R.id.circle_news);
@@ -127,58 +143,71 @@ public class EventsFragment extends Fragment {
             mBlock = (ImageView)itemView.findViewById(R.id.block_news);
             itemView.setOnClickListener(this);
         }
-        public void setBlock(){
-            mBlock.setVisibility(View.VISIBLE);
-        }
-        public void setDisplayTitle(String title){
-            mName.setText(title);
-        }
-        public void setUserImage(String image){
+        public void bind(Issue i){
+            is = i;
+            Calendar cal = Calendar.getInstance();
+            int year = cal.get(Calendar.YEAR);
+            int month = cal.get(Calendar.MONTH);
+            int day = cal.get(Calendar.DAY_OF_MONTH);
+            month = month + 1;
+
+            String dd1 = is.getDate().substring(0, 2);
+            int dd = Integer.parseInt(dd1);
+            String mm1 = is.getDate().substring(3, 5);
+            int mm = Integer.parseInt(mm1);
+            String yy1 = is.getDate().substring(6);
+            int yy = Integer.parseInt(yy1);
+            if((month > mm && year >= yy) || (day>=dd && month==mm && year==yy)){
+                click = 1;
+            }
+
+            if(is.getNumber_people_left() == 0){
+                mBlock.setVisibility(View.VISIBLE);
+            }
+            mName.setText(is.getTitle());
+            String image = is.getThumb();
             if (!image.equals("null")) {
                 Picasso.get().load(image).into(mImageCircle);
             }
-        }
-        public void setDisplayNumber(String num_left){
-            mNumber.setText("осталось " + num_left + " мест(-а)");
-        }
-        public void setDisplayDate(String time, String date){
-            mDate.setText(time + "  " + date);
-        }
-        public void setDisplayScore(String score){
-            mScore.setText(score + " points");
+            mNumber.setText("осталось " + is.getNumber_people_left() + " мест(-а)");
+            mDate.setText(is.getTime() + "  " + is.getDate());
+            mScore.setText(is.getScore() + " points");
+
         }
 
         @Override
         public void onClick(View v) {
-            CharSequence options[] = new CharSequence[]{"Посмотреть событие", "Посмотреть участников"};
+            if(click == 0) {
+                CharSequence options[] = new CharSequence[]{"Посмотреть событие", "Посмотреть участников"};
 
-            final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
-            builder.setItems(options, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
+                builder.setItems(options, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
 
-                    if(i == 0){
+                        if (i == 0) {
 
-                        Intent profileIntent = new Intent(getContext(), NewsActivity.class);
-                        profileIntent.putExtra("key", key);
-                        startActivity(profileIntent);
+                            Intent profileIntent = new Intent(getContext(), NewsActivity.class);
+                            profileIntent.putExtra("key", is.getKey());
+                            startActivity(profileIntent);
+
+                        }
+
+                        if (i == 1) {
+
+                            Intent intent = new Intent(getContext(), ParticipantsActivity.class);
+                            intent.putExtra("lol", is.getUid());
+                            intent.putExtra("key", is.getKey());
+                            startActivity(intent);
+
+                        }
 
                     }
+                });
 
-                    if(i == 1){
-
-                        Intent intent = new Intent(getContext(), ParticipantsActivity.class);
-                        intent.putExtra("lol", user_id);
-                        intent.putExtra("key", key);
-                        startActivity(intent);
-
-                    }
-
-                }
-            });
-
-            builder.show();
+                builder.show();
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.example.artik.studyt;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -73,25 +74,43 @@ public class NewsFragment extends Fragment {
                 mKeysDatabase.child(key).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        String date = dataSnapshot.child("date").getValue().toString();
-                        String image = dataSnapshot.child("thumb").getValue().toString();
-                        String name = dataSnapshot.child("title").getValue().toString();
-                        String score = dataSnapshot.child("score").getValue().toString();
-                        String number_people_left = dataSnapshot.child("number_people_left").getValue().toString();
-                        String time = dataSnapshot.child("time").getValue().toString();
-                        holder.setDisplayName(name);
-                        int a = Integer.parseInt(number_people_left);
-                        if(!image.equals("null")) {
-                            holder.setUserImage(image);
+                        if(dataSnapshot.hasChild("date") && dataSnapshot.hasChild("thumb") &&
+                                dataSnapshot.hasChild("title") && dataSnapshot.hasChild("score") &&
+                                dataSnapshot.hasChild("time") && dataSnapshot.hasChild("number_people_left")) {
+                            String date = dataSnapshot.child("date").getValue().toString();
+                            String image = dataSnapshot.child("thumb").getValue().toString();
+                            String name = dataSnapshot.child("title").getValue().toString();
+                            String score = dataSnapshot.child("score").getValue().toString();
+                            String number_people_left = dataSnapshot.child("number_people_left").getValue().toString();
+                            String time = dataSnapshot.child("time").getValue().toString();
+                            Calendar cal = Calendar.getInstance();
+                            int year = cal.get(Calendar.YEAR);
+                            int month = cal.get(Calendar.MONTH);
+                            int day = cal.get(Calendar.DAY_OF_MONTH);
+                            month = month + 1;
+                            String dd1 = date.substring(0, 2);
+                            int dd = Integer.parseInt(dd1);
+                            String mm1 = date.substring(3, 5);
+                            int mm = Integer.parseInt(mm1);
+                            String yy1 = date.substring(6);
+                            int yy = Integer.parseInt(yy1);
+                            if ((month > mm && year >= yy) || (day >= dd && month == mm && year == yy)) {
+                                mKeysDatabase.child(key).removeValue();
+                            }
+                            holder.setDisplayName(name);
+                            int a = Integer.parseInt(number_people_left);
+                            if (!image.equals("null")) {
+                                holder.setUserImage(image);
+                            }
+                            if (a == 0) {
+                                holder.setBlocked();
+                            }
+                            holder.setDisplayScore(score);
+                            holder.setDisplayDate(time, date);
+                            holder.setDisplayNumber(number_people_left);
+                            holder.key = key;
+                            mProgressBar.setVisibility(View.GONE);
                         }
-                        if(a == 0){
-                            holder.setBlocked();
-                        }
-                        holder.setDisplayScore(score);
-                        holder.setDisplayDate(time, date);
-                        holder.setDisplayNumber(number_people_left);
-                        holder.key = key;
-                        mProgressBar.setVisibility(View.GONE);
                     }
 
                     @Override
@@ -129,6 +148,9 @@ public class NewsFragment extends Fragment {
             mScore = (TextView)itemView.findViewById(R.id.score_news);
             mBlock = (ImageView)itemView.findViewById(R.id.block_news);
             itemView.setOnClickListener(this);
+        }
+        public void setBack(){
+            itemView.setBackgroundColor(Color.RED);
         }
         public void setBlocked(){
             mBlock.setVisibility(View.VISIBLE);

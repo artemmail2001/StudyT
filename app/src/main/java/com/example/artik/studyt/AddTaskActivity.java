@@ -157,7 +157,17 @@ public class AddTaskActivity extends AppCompatActivity implements OnMapReadyCall
                         new TimePickerDialog.OnTimeSetListener() {
                             @Override
                             public void onTimeSet(TimePicker timePicker, int i, int m) {
-                                mTime.setText(i + ":" + m);
+                                String t = i + ":" + m;
+                                if(i<10 && m<10) {
+                                    t = "0" + i + ":0" + m;
+                                }else if(i<10 && m>10){
+                                    t = "0" + i + ":" + m;
+                                } else if(i>10 && m<10){
+                                    t = i + ":0" + m;
+                                } else if(i>10 && m>10){
+                                    t = i + ":" + m;
+                                }
+                                mTime.setText(t);
                             }
                         },
                         hour, min, true);
@@ -170,14 +180,29 @@ public class AddTaskActivity extends AppCompatActivity implements OnMapReadyCall
         mSave.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {
+                 int a = 0;
                  mSave.setEnabled(false);
+                 Calendar cal = Calendar.getInstance();
+                 int year = cal.get(Calendar.YEAR);
+                 int month = cal.get(Calendar.MONTH);
+                 int day = cal.get(Calendar.DAY_OF_MONTH);
+                 month = month + 1;
                  final String name = mTitle.getText().toString();
                  final String text = mText.getText().toString();
                  final String date = mDate.getText().toString();
                  final String score = mScore.getSelectedItem().toString();
                  final String time = mTime.getText().toString();
                  final String number_people = mNumberPeopleAdd.getSelectedItem().toString();
-                 if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(text) && !date.equals("Выберите дату") && !time.equals("Выберите время")
+                 String dd1 = date.substring(0, 2);
+                 int dd = Integer.parseInt(dd1);
+                 String mm1 = date.substring(3, 5);
+                 int mm = Integer.parseInt(mm1);
+                 String yy1 = date.substring(6);
+                 int yy = Integer.parseInt(yy1);
+                 if((month > mm && year >= yy) || (day>=dd && month==mm && year==yy)){
+                     a = 1;
+                 }
+                 if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(text) && !date.equals("Выберите дату") && !time.equals("Выберите время") && a == 0
                          && !TextUtils.isEmpty(score) && !TextUtils.isEmpty(number_people) && (C1 != 0) && (C2 != 0)) {
                      final int sc = Integer.parseInt(score);
                      final int np = Integer.parseInt(number_people);

@@ -2,6 +2,7 @@ package com.example.artik.studyt;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -27,6 +28,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -104,6 +106,7 @@ public class MyTasksFragment extends Fragment {
         private CircleImageView mImageCircle;
         private Issue is;
         private ImageView mBlock;
+        private int click = 0;
         public TasksHolder(View itemView) {
             super(itemView);
             mName = (TextView)itemView.findViewById(R.id.title_news);
@@ -116,6 +119,23 @@ public class MyTasksFragment extends Fragment {
         }
         public void bind(Issue i){
             is = i;
+            Calendar cal = Calendar.getInstance();
+            int year = cal.get(Calendar.YEAR);
+            int month = cal.get(Calendar.MONTH);
+            int day = cal.get(Calendar.DAY_OF_MONTH);
+            month = month + 1;
+
+            String dd1 = is.getDate().substring(0, 2);
+            int dd = Integer.parseInt(dd1);
+            String mm1 = is.getDate().substring(3, 5);
+            int mm = Integer.parseInt(mm1);
+            String yy1 = is.getDate().substring(6);
+            int yy = Integer.parseInt(yy1);
+            if((month > mm && year >= yy) || (day>=dd && month==mm && year==yy)){
+                itemView.setBackgroundColor(Color.RED);
+                click = 1;
+            }
+
             if(is.getNumber_people_left() == 0){
                 mBlock.setVisibility(View.VISIBLE);
             }
@@ -132,35 +152,37 @@ public class MyTasksFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            CharSequence options[] = new CharSequence[]{"Посмотреть событие", "Посмотреть участников"};
+            if(click == 0) {
+                CharSequence options[] = new CharSequence[]{"Посмотреть событие", "Посмотреть участников"};
 
-            final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
-            builder.setItems(options, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
+                builder.setItems(options, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
 
-                    if(i == 0){
+                        if (i == 0) {
 
-                        Intent profileIntent = new Intent(getContext(), NewsActivity.class);
-                        profileIntent.putExtra("key", is.getKey());
-                        startActivity(profileIntent);
+                            Intent profileIntent = new Intent(getContext(), NewsActivity.class);
+                            profileIntent.putExtra("key", is.getKey());
+                            startActivity(profileIntent);
+
+                        }
+
+                        if (i == 1) {
+
+                            Intent intent = new Intent(getContext(), ParticipantsActivity.class);
+                            intent.putExtra("lol", is.getUid());
+                            intent.putExtra("key", is.getKey());
+                            startActivity(intent);
+
+                        }
 
                     }
+                });
 
-                    if(i == 1){
-
-                        Intent intent = new Intent(getContext(), ParticipantsActivity.class);
-                        intent.putExtra("lol", is.getUid());
-                        intent.putExtra("key", is.getKey());
-                        startActivity(intent);
-
-                    }
-
-                }
-            });
-
-            builder.show();
+                builder.show();
+            }
         }
     }
 }
