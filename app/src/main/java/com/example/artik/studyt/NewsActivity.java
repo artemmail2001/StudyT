@@ -174,11 +174,8 @@ public class NewsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             mRoot.child("Participants").child(issue.getUid()).child(issue.getKey()).runTransaction(new Transaction.Handler() {
                                 @Override
                                 public Transaction.Result doTransaction(MutableData mutableData1) {
-                                    String m = "null";
-                                    int i = 1;
-                                    while(i<=a) {
-                                        m = mutableData1.child("uid_" + i).getValue().toString();
-                                        if (m.equals("null")){
+                                    for(int i = 1; i<=a; i++) {
+                                        if (mutableData1.child("uid_" + i).getValue().toString().equals("null")){
                                             mutableData1.child("uid_" + i).setValue(uid);
                                             mRoot.child("Events").child(uid).child(issue.getKey()).child("position").setValue("uid_" + i).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
@@ -208,7 +205,7 @@ public class NewsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                             return Transaction.success(mutableData1);
                                         }
                                         else{
-                                            i++;
+                                            continue;
                                         }
                                     }
                                     return Transaction.abort();
@@ -242,11 +239,8 @@ public class NewsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             mRoot.child("Participants").child(issue.getUid()).child(issue.getKey()).runTransaction(new Transaction.Handler() {
                                 @Override
                                 public Transaction.Result doTransaction(MutableData mutableData1) {
-                                    String m = "null";
-                                    int i = 0;
-                                    while(i<=a) {
-                                        m = mutableData1.child("uid_" + i).getValue().toString();
-                                        if (m.equals(uid)){
+                                    for(int i = 1; i<=a; i++) {
+                                        if (mutableData1.child("uid_" + i).getValue().toString().equals(uid)){
                                             mutableData1.child("uid_" + i).setValue("null");
                                             mRoot.child("Events").child(uid).child(issue.getKey()).child("position").removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
@@ -277,7 +271,7 @@ public class NewsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                             return Transaction.success(mutableData1);
                                         }
                                         else{
-                                            i++;
+                                            continue;
                                         }
                                     }
                                     return Transaction.abort();
