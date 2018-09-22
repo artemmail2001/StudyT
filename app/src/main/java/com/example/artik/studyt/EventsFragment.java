@@ -59,13 +59,12 @@ public class EventsFragment extends Fragment {
     @Override
     public void onStart(){
         super.onStart();
+        mIssues.clear();
         mEventsDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                mIssues.clear();
                 for(DataSnapshot snapshot: dataSnapshot.getChildren()){
                     final String key = snapshot.getKey();
-                    Log.d("lol", key);
                     mKeysDatabase.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot1) {

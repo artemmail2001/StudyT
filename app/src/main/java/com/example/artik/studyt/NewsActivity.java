@@ -162,7 +162,7 @@ public class NewsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if(mJoin.getText().equals("Присоединиться")) {
                     mKeysDatabase.runTransaction(new Transaction.Handler() {
                         @Override
-                        public Transaction.Result doTransaction(MutableData mutableData) {
+                        public Transaction.Result doTransaction(final MutableData mutableData) {
                             final Issue issue = mutableData.getValue(Issue.class);
                             if (issue == null) {
                                 return Transaction.success(mutableData);
@@ -170,8 +170,6 @@ public class NewsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             final int a = issue.number_people;
                             final int sc = issue.getScore();
                             issue.number_people_left = issue.number_people_left - 1;
-                            mRoot.child("Issues").child(issue.getUid()).child(issue.getKey()).setValue(issue);
-                            mutableData.setValue(issue);
                             mRoot.child("Participants").child(issue.getUid()).child(issue.getKey()).runTransaction(new Transaction.Handler() {
                                 @Override
                                 public Transaction.Result doTransaction(MutableData mutableData1) {
@@ -182,29 +180,31 @@ public class NewsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                             return Transaction.success(mutableData1);
                                         }
                                     }
-                                    return Transaction.success(mutableData1);
+                                    return Transaction.abort();
                                 }
 
                                 @Override
                                 public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-                                }
-                            });
-                            mRoot.child("Users").child(uid).runTransaction(new Transaction.Handler() {
-                                @Override
-                                public Transaction.Result doTransaction(MutableData mutableData2) {
-                                    User user = mutableData2.getValue(User.class);
-                                    if (user == null) {
-                                        return Transaction.success(mutableData2);
-                                    }
-                                    int a = user.getScore() + sc;
-                                    mRoot.child("Users").child(uid).child("score").setValue(a);
-                                    return Transaction.success(mutableData2);
-                                }
+                                    mRoot.child("Users").child(uid).runTransaction(new Transaction.Handler() {
+                                        @Override
+                                        public Transaction.Result doTransaction(MutableData mutableData2) {
+                                            User user = mutableData2.getValue(User.class);
+                                            if (user == null) {
+                                                return Transaction.success(mutableData2);
+                                            }
+                                            int a = user.getScore() + sc;
+                                            mRoot.child("Users").child(uid).child("score").setValue(a);
+                                            return Transaction.success(mutableData2);
+                                        }
 
-                                @Override
-                                public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                                        @Override
+                                        public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                                            mRoot.child("Issues").child(issue.getUid()).child(issue.getKey()).setValue(issue);
+                                        }
+                                    });
                                 }
                             });
+                            mutableData.setValue(issue);
                             return Transaction.success(mutableData);
                         }
 
@@ -227,8 +227,6 @@ public class NewsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             final int a = issue.number_people;
                             final int sc = issue.getScore();
                             issue.number_people_left = issue.number_people_left + 1;
-                            mRoot.child("Issues").child(issue.getUid()).child(issue.getKey()).setValue(issue);
-                            mutableData.setValue(issue);
                             mRoot.child("Participants").child(issue.getUid()).child(issue.getKey()).runTransaction(new Transaction.Handler() {
                                 @Override
                                 public Transaction.Result doTransaction(MutableData mutableData1) {
@@ -239,30 +237,31 @@ public class NewsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                             return Transaction.success(mutableData1);
                                         }
                                     }
-                                    return Transaction.success(mutableData1);
+                                    return Transaction.abort();
                                 }
 
                                 @Override
                                 public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                                    mRoot.child("Users").child(uid).runTransaction(new Transaction.Handler() {
+                                        @Override
+                                        public Transaction.Result doTransaction(MutableData mutableData2) {
+                                            User user = mutableData2.getValue(User.class);
+                                            if (user == null) {
+                                                return Transaction.success(mutableData2);
+                                            }
+                                            int a = user.getScore() - sc;
+                                            mRoot.child("Users").child(uid).child("score").setValue(a);
+                                            return Transaction.success(mutableData2);
+                                        }
+
+                                        @Override
+                                        public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                                            mRoot.child("Issues").child(issue.getUid()).child(issue.getKey()).setValue(issue);
+                                        }
+                                    });
                                 }
                             });
-                            mRoot.child("Users").child(uid).runTransaction(new Transaction.Handler() {
-                                @Override
-                                public Transaction.Result doTransaction(MutableData mutableData2) {
-                                    User user = mutableData2.getValue(User.class);
-                                    if (user == null) {
-                                        return Transaction.success(mutableData2);
-                                    }
-                                    int a = user.getScore() - sc;
-                                    mRoot.child("Users").child(uid).child("score").setValue(a);
-                                    return Transaction.success(mutableData2);
-                                }
-
-                                @Override
-                                public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-
-                                }
-                            });
+                            mutableData.setValue(issue);
                             return Transaction.success(mutableData);
                         }
 
