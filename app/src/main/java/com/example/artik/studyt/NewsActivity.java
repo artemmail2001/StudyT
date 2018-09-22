@@ -20,6 +20,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -169,15 +170,42 @@ public class NewsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             }
                             final int a = issue.number_people;
                             final int sc = issue.getScore();
-                            issue.number_people_left = issue.number_people_left - 1;
+                            final int num = issue.number_people_left-1;
                             mRoot.child("Participants").child(issue.getUid()).child(issue.getKey()).runTransaction(new Transaction.Handler() {
                                 @Override
                                 public Transaction.Result doTransaction(MutableData mutableData1) {
                                     for(int i = 1; i<=a; i++) {
+                                        Log.d("lolita", "Началось");
                                         if (mutableData1.child("uid_" + i).getValue().toString().equals("null")){
                                             mutableData1.child("uid_" + i).setValue(uid);
-                                            mRoot.child("Events").child(uid).child(issue.getKey()).child("position").setValue("uid_" + i);
+                                            mRoot.child("Events").child(uid).child(issue.getKey()).child("position").setValue("uid_" + i).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    Toast.makeText(NewsActivity.this, "Сохранено", Toast.LENGTH_SHORT).show();
+                                                    mKeysDatabase.child("number_people_left").setValue(num);
+                                                    mRoot.child("Issues").child(issue.getUid()).child(issue.getKey()).setValue(issue);
+                                                    mRoot.child("Users").child(uid).runTransaction(new Transaction.Handler() {
+                                                        @Override
+                                                        public Transaction.Result doTransaction(MutableData mutableData2) {
+                                                            User user = mutableData2.getValue(User.class);
+                                                            if (user == null) {
+                                                                return Transaction.success(mutableData2);
+                                                            }
+                                                            int a = user.getScore() + sc;
+                                                            mRoot.child("Users").child(uid).child("score").setValue(a);
+                                                            return Transaction.success(mutableData2);
+                                                        }
+
+                                                        @Override
+                                                        public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                                                        }
+                                                    });
+                                                }
+                                            });
                                             return Transaction.success(mutableData1);
+                                        }
+                                        else{
+                                            continue;
                                         }
                                     }
                                     return Transaction.abort();
@@ -185,26 +213,8 @@ public class NewsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                                 @Override
                                 public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-                                    mRoot.child("Users").child(uid).runTransaction(new Transaction.Handler() {
-                                        @Override
-                                        public Transaction.Result doTransaction(MutableData mutableData2) {
-                                            User user = mutableData2.getValue(User.class);
-                                            if (user == null) {
-                                                return Transaction.success(mutableData2);
-                                            }
-                                            int a = user.getScore() + sc;
-                                            mRoot.child("Users").child(uid).child("score").setValue(a);
-                                            return Transaction.success(mutableData2);
-                                        }
-
-                                        @Override
-                                        public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-                                            mRoot.child("Issues").child(issue.getUid()).child(issue.getKey()).setValue(issue);
-                                        }
-                                    });
                                 }
                             });
-                            mutableData.setValue(issue);
                             return Transaction.success(mutableData);
                         }
 
@@ -219,22 +229,49 @@ public class NewsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 else if(mJoin.getText().toString().equals("Выйти из события")){
                     mKeysDatabase.runTransaction(new Transaction.Handler() {
                         @Override
-                        public Transaction.Result doTransaction(MutableData mutableData) {
+                        public Transaction.Result doTransaction(final MutableData mutableData) {
                             final Issue issue = mutableData.getValue(Issue.class);
                             if (issue == null) {
                                 return Transaction.success(mutableData);
                             }
                             final int a = issue.number_people;
                             final int sc = issue.getScore();
-                            issue.number_people_left = issue.number_people_left + 1;
+                            final int num = issue.number_people_left + 1;
                             mRoot.child("Participants").child(issue.getUid()).child(issue.getKey()).runTransaction(new Transaction.Handler() {
                                 @Override
                                 public Transaction.Result doTransaction(MutableData mutableData1) {
                                     for(int i = 1; i<=a; i++) {
                                         if (mutableData1.child("uid_" + i).getValue().toString().equals(uid)){
                                             mutableData1.child("uid_" + i).setValue("null");
-                                            mRoot.child("Events").child(uid).child(issue.getKey()).child("position").removeValue();
+                                            mRoot.child("Events").child(uid).child(issue.getKey()).child("position").removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    Toast.makeText(NewsActivity.this, "Сохранено", Toast.LENGTH_SHORT).show();
+                                                    issue.number_people_left = issue.number_people_left + 1;
+                                                    mKeysDatabase.child("number_people_left").setValue(num);
+                                                    mRoot.child("Issues").child(issue.getUid()).child(issue.getKey()).setValue(issue);
+                                                    mRoot.child("Users").child(uid).runTransaction(new Transaction.Handler() {
+                                                        @Override
+                                                        public Transaction.Result doTransaction(MutableData mutableData2) {
+                                                            User user = mutableData2.getValue(User.class);
+                                                            if (user == null) {
+                                                                return Transaction.success(mutableData2);
+                                                            }
+                                                            int a = user.getScore() - sc;
+                                                            mRoot.child("Users").child(uid).child("score").setValue(a);
+                                                            return Transaction.success(mutableData2);
+                                                        }
+
+                                                        @Override
+                                                        public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                                                        }
+                                                    });
+                                                }
+                                            });
                                             return Transaction.success(mutableData1);
+                                        }
+                                        else{
+                                            continue;
                                         }
                                     }
                                     return Transaction.abort();
@@ -242,26 +279,8 @@ public class NewsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                                 @Override
                                 public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-                                    mRoot.child("Users").child(uid).runTransaction(new Transaction.Handler() {
-                                        @Override
-                                        public Transaction.Result doTransaction(MutableData mutableData2) {
-                                            User user = mutableData2.getValue(User.class);
-                                            if (user == null) {
-                                                return Transaction.success(mutableData2);
-                                            }
-                                            int a = user.getScore() - sc;
-                                            mRoot.child("Users").child(uid).child("score").setValue(a);
-                                            return Transaction.success(mutableData2);
-                                        }
-
-                                        @Override
-                                        public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-                                            mRoot.child("Issues").child(issue.getUid()).child(issue.getKey()).setValue(issue);
-                                        }
-                                    });
                                 }
                             });
-                            mutableData.setValue(issue);
                             return Transaction.success(mutableData);
                         }
 
