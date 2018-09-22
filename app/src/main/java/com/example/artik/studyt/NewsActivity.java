@@ -174,14 +174,17 @@ public class NewsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             mRoot.child("Participants").child(issue.getUid()).child(issue.getKey()).runTransaction(new Transaction.Handler() {
                                 @Override
                                 public Transaction.Result doTransaction(MutableData mutableData1) {
-                                    for(int i = 1; i<=a; i++) {
-                                        Log.d("lolita", "Началось");
-                                        if (mutableData1.child("uid_" + i).getValue().toString().equals("null")){
+                                    String m = "null";
+                                    int i = 1;
+                                    while(i<=a) {
+                                        m = mutableData1.child("uid_" + i).getValue().toString();
+                                        if (m.equals("null")){
                                             mutableData1.child("uid_" + i).setValue(uid);
                                             mRoot.child("Events").child(uid).child(issue.getKey()).child("position").setValue("uid_" + i).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
                                                     Toast.makeText(NewsActivity.this, "Сохранено", Toast.LENGTH_SHORT).show();
+                                                    mJoin.setText("Выйти из события");
                                                     mKeysDatabase.child("number_people_left").setValue(num);
                                                     mRoot.child("Issues").child(issue.getUid()).child(issue.getKey()).setValue(issue);
                                                     mRoot.child("Users").child(uid).runTransaction(new Transaction.Handler() {
@@ -205,7 +208,7 @@ public class NewsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                             return Transaction.success(mutableData1);
                                         }
                                         else{
-                                            continue;
+                                            i++;
                                         }
                                     }
                                     return Transaction.abort();
@@ -220,7 +223,6 @@ public class NewsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                         @Override
                         public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-                            mJoin.setText("Выйти из события");
                             mJoin.setEnabled(true);
                             mDialog.dismiss();
                         }
@@ -240,13 +242,17 @@ public class NewsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             mRoot.child("Participants").child(issue.getUid()).child(issue.getKey()).runTransaction(new Transaction.Handler() {
                                 @Override
                                 public Transaction.Result doTransaction(MutableData mutableData1) {
-                                    for(int i = 1; i<=a; i++) {
-                                        if (mutableData1.child("uid_" + i).getValue().toString().equals(uid)){
+                                    String m = "null";
+                                    int i = 0;
+                                    while(i<=a) {
+                                        m = mutableData1.child("uid_" + i).getValue().toString();
+                                        if (m.equals(uid)){
                                             mutableData1.child("uid_" + i).setValue("null");
                                             mRoot.child("Events").child(uid).child(issue.getKey()).child("position").removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
                                                     Toast.makeText(NewsActivity.this, "Сохранено", Toast.LENGTH_SHORT).show();
+                                                    mJoin.setText("Присоединиться");
                                                     issue.number_people_left = issue.number_people_left + 1;
                                                     mKeysDatabase.child("number_people_left").setValue(num);
                                                     mRoot.child("Issues").child(issue.getUid()).child(issue.getKey()).setValue(issue);
@@ -271,7 +277,7 @@ public class NewsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                             return Transaction.success(mutableData1);
                                         }
                                         else{
-                                            continue;
+                                            i++;
                                         }
                                     }
                                     return Transaction.abort();
@@ -286,7 +292,6 @@ public class NewsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                         @Override
                         public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-                            mJoin.setText("Присоединиться");
                             mJoin.setEnabled(true);
                             mDialog.dismiss();
                         }
